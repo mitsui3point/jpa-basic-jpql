@@ -25,11 +25,13 @@ public class JpaMain {
             member2.setAge(12);
             em.persist(member2);
 
-            Member singleResult = em.createQuery("select m from Member m where m.username = ?1", Member.class)
-                    .setParameter(1, "user2")
-                    .getSingleResult();
-            System.out.println("singleResult = " + singleResult.getUsername());
-            System.out.println("singleResult = " + singleResult.getAge());
+            //SELECT m FROM Member m -> 엔티티 프로젝션
+            List<Member> members = em.createQuery("select m from Member m", Member.class)
+                    .getResultList();
+
+            for (Member member : members) {
+                System.out.println("member.getUsername() = " + member.getUsername());
+            }
 
             tx.commit();
         } catch (Exception e) {
