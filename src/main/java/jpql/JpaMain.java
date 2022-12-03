@@ -15,15 +15,15 @@ public class JpaMain {
         tx.begin();
 
         try {
-//            Member member1 = new Member();
-//            member1.setUsername("user1");
-//            member1.setAge(10);
-//            em.persist(member1);
-//
-//            Member member2 = new Member();
-//            member2.setUsername("user2");
-//            member2.setAge(12);
-//            em.persist(member2);
+            Member member1 = new Member();
+            member1.setUsername("user1");
+            member1.setAge(10);
+            em.persist(member1);
+
+            Member member2 = new Member();
+            member2.setUsername("user2");
+            member2.setAge(12);
+            em.persist(member2);
 
             TypedQuery<Member> typedQuery = em.createQuery("select m from Member m", Member.class);
             Member singleResult = typedQuery.getSingleResult();
