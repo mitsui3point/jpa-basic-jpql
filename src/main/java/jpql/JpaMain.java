@@ -25,7 +25,7 @@ public class JpaMain {
             member2.setAge(12);
             em.persist(member2);
 
-            TypedQuery<Member> typedQuery = em.createQuery("select m from Member m", Member.class);
+            TypedQuery<Member> typedQuery = em.createQuery("select m from Member m where m.id = 1L", Member.class);
             Member singleResult = typedQuery.getSingleResult();
             System.out.println("singleResult = " + singleResult.getUsername());
 
