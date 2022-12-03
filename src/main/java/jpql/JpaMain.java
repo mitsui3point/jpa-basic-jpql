@@ -19,22 +19,22 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setAge(12);
-            em.persist(member1);
+            for (int i = 0; i < 100; i++) {
+                Member member = new Member();
+                member.setUsername("member"+i);
+                member.setAge(i);
+                em.persist(member);
+            }
 
-            Member member2 = new Member();
-            member2.setUsername("member1");
-            member2.setAge(12);
-            em.persist(member2);
-
-            List<MemberDTO> resultList = em.createQuery("select distinct new jpql.dto.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
+            //페이징 쿼리
+            List<Member> members = em.createQuery("select m from Member m order by m.id desc", Member.class)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
                     .getResultList();
 
-            for (MemberDTO memberDTO : resultList) {
-                System.out.println("memberDTO.getUsername() = " + memberDTO.getUsername());
-                System.out.println("memberDTO.getAge() = " + memberDTO.getAge());
+            System.out.println("members.size() = " + members.size());
+            for (Member member : members) {
+                System.out.println("member = " + member);
             }
 
             tx.commit();
