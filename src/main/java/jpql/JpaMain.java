@@ -1,12 +1,12 @@
 package jpql;
 
-import jpql.embeddable.Address;
 import jpql.entity.Member;
-import jpql.entity.Order;
-import jpql.entity.Team;
 
-import javax.persistence.*;
-import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import java.util.List;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -18,22 +18,26 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setUsername("username");
-            em.persist(member);
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setAge(12);
+            em.persist(member1);
 
-            Order order = new Order();
-            order.setMember(member);
-            order.setAddress(new Address("city", "street", "10000"));
-            em.persist(order);
+            Member member2 = new Member();
+            member2.setUsername("member1");
+            member2.setAge(12);
+            em.persist(member2);
 
-            //SELECT m.address FROM Member m -> 임베디드 타입 프로젝션
-            List<Address> addresses = em.createQuery("select o.address from Order o", Address.class)
+            //SELECT m.username, m.age FROM Member m -> 스칼라 타입 프로젝션
+            //DISTINCT로 중복 제거
+            List<Object[]> members = em.createQuery("select distinct m.username, m.age from Member m")
                     .getResultList();
 
-            for (Address address : addresses) {
-                System.out.println("address.getCity() = " + address.getCity());
+            for (Object[] member : members) {
+                System.out.println("member[0] = " + member[0]);
+                System.out.println("member[1] = " + member[1]);
             }
+
 
             tx.commit();
         } catch (Exception e) {
