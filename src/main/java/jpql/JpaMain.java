@@ -1,6 +1,8 @@
 package jpql;
 
+import jpql.embeddable.Address;
 import jpql.entity.Member;
+import jpql.entity.Order;
 import jpql.entity.Team;
 
 import javax.persistence.*;
@@ -16,34 +18,21 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member1 = new Member();
-            member1.setUsername("user1");
-            member1.setAge(10);
+            Member member = new Member();
+            member.setUsername("username");
+            em.persist(member);
 
-            Team team1 = new Team();
-            team1.setName("team1");
-            em.persist(team1);
+            Order order = new Order();
+            order.setMember(member);
+            order.setAddress(new Address("city", "street", "10000"));
+            em.persist(order);
 
-            member1.setTeam(team1);
-            em.persist(member1);
-
-            Member member2 = new Member();
-            member2.setUsername("user2");
-            member2.setAge(12);
-
-            Team team2 = new Team();
-            team2.setName("team2");
-            em.persist(team2);
-
-            member2.setTeam(team2);
-            em.persist(member2);
-
-            //SELECT t FROM Member m join m.team t -> 엔티티 프로젝션
-            List<Team> results = em.createQuery("select t from Member m inner join m.team t", Team.class)
+            //SELECT m.address FROM Member m -> 임베디드 타입 프로젝션
+            List<Address> addresses = em.createQuery("select o.address from Order o", Address.class)
                     .getResultList();
 
-            for (Team result : results) {
-                System.out.println("result = " + result.getName());
+            for (Address address : addresses) {
+                System.out.println("address.getCity() = " + address.getCity());
             }
 
             tx.commit();
