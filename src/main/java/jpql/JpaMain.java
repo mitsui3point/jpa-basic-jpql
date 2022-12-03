@@ -30,10 +30,11 @@ public class JpaMain {
 
             //SELECT m.username, m.age FROM Member m -> 스칼라 타입 프로젝션
             //DISTINCT로 중복 제거
-            List<Object[]> members = em.createQuery("select distinct m.username, m.age from Member m")
+            List members = em.createQuery("select distinct m.username, m.age from Member m")
                     .getResultList();
 
-            for (Object[] member : members) {
+            for (Object m : members) {
+                Object[] member = (Object[]) m;
                 System.out.println("member[0] = " + member[0]);
                 System.out.println("member[1] = " + member[1]);
             }
