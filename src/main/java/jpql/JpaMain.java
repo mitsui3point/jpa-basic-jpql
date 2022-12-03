@@ -25,8 +25,8 @@ public class JpaMain {
             member2.setAge(12);
             em.persist(member2);
 
-            Member singleResult = em.createQuery("select m from Member m where m.username = :username", Member.class)
-                    .setParameter("username", "user2")
+            Member singleResult = em.createQuery("select m from Member m where m.username = ?1", Member.class)
+                    .setParameter(1, "user2")
                     .getSingleResult();
             System.out.println("singleResult = " + singleResult.getUsername());
             System.out.println("singleResult = " + singleResult.getAge());
