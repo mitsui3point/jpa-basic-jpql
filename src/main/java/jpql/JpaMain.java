@@ -38,8 +38,8 @@ public class JpaMain {
             member2.setTeam(team2);
             em.persist(member2);
 
-            //SELECT m.team FROM Member m -> 엔티티 프로젝션
-            List<Team> results = em.createQuery("select m.team from Member m", Team.class)
+            //SELECT t FROM Member m join m.team t -> 엔티티 프로젝션
+            List<Team> results = em.createQuery("select t from Member m inner join m.team t", Team.class)
                     .getResultList();
 
             for (Team result : results) {
