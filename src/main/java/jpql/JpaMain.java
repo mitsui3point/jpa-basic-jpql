@@ -18,52 +18,31 @@ public class JpaMain {
         try {
             Member member1 = new Member();
             member1.setUsername("user1");
-            member1.setAge(11);
+            member1.setAge(10);
             em.persist(member1);
 
-            Member member2 = new Member();
-            member2.setUsername("user2");
-            member2.setAge(13);
-            em.persist(member2);
-
-            Member member3 = new Member();
-            member3.setUsername("user2");
-            member3.setAge(22);
-            em.persist(member3);
-
-            Member member4 = new Member();
-            member4.setUsername("user3");
-            member4.setAge(29);
-            em.persist(member4);
-
-            Member member5 = new Member();
-            member5.setUsername("user1");
-            member5.setAge(29);
-            em.persist(member5);
-
-            List<Object[]> members = em.createQuery(
-                    "select m.username," +
-                            " count(m) as cnt," +
-                            " sum(m.age) as sum," +
-                            " avg(m.age) as avg," +
-                            " max(m.age) as max," +
-                            " min(m.age) as min" +
-                            " from Member as m" +
-                            " group by m.username" +
-                            " having count(m) > 1" +
-                            " order by m.username desc")
-                    .getResultList();
-
-            for (Object[] member : members) {
-                System.out.println("========================");
-                System.out.println("member = " + member[0]);
-                System.out.println("member = " + member[1]);
-                System.out.println("member = " + member[2]);
-                System.out.println("member = " + member[3]);
-                System.out.println("member = " + member[4]);
-                System.out.println("member = " + member[5]);
+            //TypeQuery: 반환 타입이 명확할 때 사용
+            TypedQuery<Member> typedQuery1 = em.createQuery("select m from Member m", Member.class);
+            List<Member> typedQuery1Members = typedQuery1.getResultList();
+            for (Member typedQuery1Member : typedQuery1Members) {
+                System.out.println("typedQuery1Member = " + typedQuery1Member.getUsername());
             }
-
+            
+            TypedQuery<String> typedQuery2 = em.createQuery("select m.username from Member m", String.class);
+            List<String> typedQuery2Members = typedQuery2.getResultList();
+            for (String typedQuery2Member : typedQuery2Members) {
+                System.out.println("typedQuery2Member = " + typedQuery2Member);
+            }
+            
+            //Query: 반환 타입이 명확하지 않을 때 사용
+            Query query = em.createQuery("select m.username, m.age from Member m");
+            List<Object[]> queryMembers = query.getResultList();
+            for (Object[] queryMember : queryMembers) {
+                for (Object o : queryMember) {
+                    System.out.println("o = " + o);
+                }
+            }
+            
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
