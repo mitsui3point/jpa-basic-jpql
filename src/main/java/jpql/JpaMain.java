@@ -1,5 +1,6 @@
 package jpql;
 
+import jpql.dto.MemberDTO;
 import jpql.entity.Member;
 
 import javax.persistence.EntityManager;
@@ -28,17 +29,13 @@ public class JpaMain {
             member2.setAge(12);
             em.persist(member2);
 
-            //SELECT m.username, m.age FROM Member m -> 스칼라 타입 프로젝션
-            //DISTINCT로 중복 제거
-            List members = em.createQuery("select distinct m.username, m.age from Member m")
+            List<MemberDTO> resultList = em.createQuery("select distinct new jpql.dto.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
                     .getResultList();
 
-            for (Object m : members) {
-                Object[] member = (Object[]) m;
-                System.out.println("member[0] = " + member[0]);
-                System.out.println("member[1] = " + member[1]);
+            for (MemberDTO memberDTO : resultList) {
+                System.out.println("memberDTO.getUsername() = " + memberDTO.getUsername());
+                System.out.println("memberDTO.getAge() = " + memberDTO.getAge());
             }
-
 
             tx.commit();
         } catch (Exception e) {
