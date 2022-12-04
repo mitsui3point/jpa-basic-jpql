@@ -37,9 +37,11 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m, t from Member m left outer join m.team t";
+            String query = "select t, m from Team t left outer join t.members m";
             List<Object[]> resultList = em.createQuery(query, Object[].class)
                     .getResultList();
+
+            System.out.println("resultList.size() = " + resultList.size());
             for (Object[] objects : resultList) {
                 for (Object object : objects) {
                     System.out.println("object = " + object);
