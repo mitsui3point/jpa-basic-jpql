@@ -22,15 +22,17 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Book book = Book.create("book", 10000, 100, "author1", "isbn1");
-            em.persist(book);
+            Member member1 = Member.createMember("username", 12, ADMIN);
+            em.persist(member1);
+            Member member2 = Member.createMember(null, 12, ADMIN);
+            em.persist(member2);
 
             em.flush();
             em.clear();
 
-            String query ="select i " +
-                    "from Item i " +
-                    "where type(i) = Book ";
+            String query ="select m " +
+                    "from Member m " +
+                    "where m.username is null ";
             List resultList = em.createQuery(query)
                     .getResultList();
 
