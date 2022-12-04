@@ -13,36 +13,33 @@ public class Generic<T> {
     private void print() {
         System.out.println("=====================");
         if (object instanceof Object[]) {
-            System.out.println(printAll());
+            printAll();
             return;
         }
-        System.out.println(printOne());
+        printOne();
+        System.out.println("=====================");
     }
 
-    private String printAll() {
-        StringBuilder sb = new StringBuilder();
+    private void printAll() {
 
         Object[] objects = (Object[]) object;
         for (Object result : objects) {
             if (result != null) {
-                sb.append(result.getClass().getName() + "\t: result = " + result + "\n");
+                System.out.println(result.getClass().getName() + "\t: result = " + result);
                 continue;
             }
-            sb.append("result = null");
+            System.out.println("result = null");
         }
-
-        return sb.toString();
     }
 
-    private String printOne() {
+    private void printOne() {
         StringBuilder sb = new StringBuilder();
 
         T result = object;
         if (result != null) {
-            return sb.append(result.getClass().getName() + "\t, result = " + result).toString();
+            System.out.println(result.getClass().getName() + "\t, result = " + result);
+            return;
         }
-        sb.append("result = null");
-
-        return sb.toString();
+        System.out.println("result = null");
     }
 }
