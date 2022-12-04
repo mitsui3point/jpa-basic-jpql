@@ -2,7 +2,7 @@ package jpql;
 
 import jpql.entity.Member;
 import jpql.entity.Product;
-import jpql.entity.Team;
+import jpql.generic.Generic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -20,11 +20,15 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = Member.createMember("name", 11);
-            em.persist(member);
+            Member member1 = Member.createMember("name", 11);
+            em.persist(member1);
+            Member member2 = Member.createMember("name2", 11);
+            em.persist(member2);
 
-            Product product = Product.createProduct("name", 10000, 100);
-            em.persist(product);
+            Product product1 = Product.createProduct("name", 10000, 100);
+            em.persist(product1);
+            Product product2 = Product.createProduct("name2", 10000, 100);
+            em.persist(product2);
 
             em.flush();
             em.clear();
@@ -35,26 +39,14 @@ public class JpaMain {
              * https://developyo.tistory.com/121
              */
 
-            String query = "select m, p from Member m left join Product p on m.username = p.name";
+            String query = "select p, m from Member m left join Product p on m.username = p.name";
             List resultList = em.createQuery(query)
                     .getResultList();
 
             System.out.println("resultList.size() = " + resultList.size());
             for (Object object : resultList) {
-                if (object instanceof Object[]) {
-                    new Generic<>().print((Object[]) object);
-                }
-                if (object instanceof Member) {
-                    new Generic<>().print((Member) object);
-                }
-                if (object instanceof Team) {
-                    new Generic<>().print((Team) object);
-                }
-                if (object instanceof Product) {
-                    new Generic<>().print((Product) object);
-                }
+                new Generic<>(object);
             }
-
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
@@ -63,27 +55,5 @@ public class JpaMain {
             em.close();
         }
         emf.close();
-    }
-
-    static class Generic<T> {
-        public void print(T[] results) {
-            System.out.println("=====================");
-            for (T result : results) {
-                if (result != null) {
-                    System.out.println(result.getClass().getName() + "\t: result = " + result);
-                    continue;
-                }
-                System.out.println("result = null");
-            }
-        }
-
-        public void print(T result) {
-            System.out.println("=====================");
-            if (result != null) {
-                System.out.println(result.getClass().getName() + "\t, result = " + result);
-                return;
-            }
-            System.out.println("result = null");
-        }
     }
 }
