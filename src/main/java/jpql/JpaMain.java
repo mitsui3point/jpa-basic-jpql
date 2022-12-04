@@ -1,6 +1,7 @@
 package jpql;
 
 import jpql.entity.Member;
+import jpql.entity.Product;
 import jpql.entity.Team;
 
 import javax.persistence.EntityManager;
@@ -19,25 +20,11 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Team team1 = Team.createTeam("team1");
-            Team team2 = Team.createTeam("team2");
-            Team team3 = Team.createTeam("team3");
-            em.persist(team1);
-            em.persist(team2);
-            em.persist(team3);
+            Member member = Member.createMember("name", 11);
+            em.persist(member);
 
-            Member member1 = Member.createMember("member1", 13);
-            Member member2 = Member.createMember("member2", 20);
-            Member member3 = Member.createMember("member3", 4);
-            Member member4 = Member.createMember("member4", 55);
-
-            member1.changeTeam(team1);
-            member2.changeTeam(team1);
-            member3.changeTeam(team2);
-            em.persist(member1);
-            em.persist(member2);
-            em.persist(member3);
-            em.persist(member4);
+            Product product = Product.createProduct("name", 10000, 100);
+            em.persist(product);
 
             em.flush();
             em.clear();
@@ -48,17 +35,8 @@ public class JpaMain {
              * https://developyo.tistory.com/121
              */
 
-//            String query = "select t from Team t left join t.members m on t.name = :name";
-//            String query = "select t from Team t left join t.members m on t.username = :username";
-//            String query = "select t, m from Team t left join t.members m on t.name = :name";
-//            String query = "select t, m from Team t left join t.members m on m.username = :username";
-//            String query = "select m from Member m left join m.team t on m.name = :name";
-//            String query = "select m from Member m left join m.team t on m.username = :username";
-            String query = "select m, t from Member m left join m.team t on t.name = :name";
-//            String query = "select m, t from Member m left join m.team t on m.username = :username";
+            String query = "select m, p from Member m left join Product p on m.username = p.name";
             List resultList = em.createQuery(query)
-                    .setParameter("name", "team1")
-//                    .setParameter("username", "member1")
                     .getResultList();
 
             System.out.println("resultList.size() = " + resultList.size());
@@ -71,6 +49,9 @@ public class JpaMain {
                 }
                 if (object instanceof Team) {
                     new Generic<>().print((Team) object);
+                }
+                if (object instanceof Product) {
+                    new Generic<>().print((Product) object);
                 }
             }
 
@@ -92,7 +73,7 @@ public class JpaMain {
                     System.out.println(result.getClass().getName() + "\t: result = " + result);
                     continue;
                 }
-                System.out.println("result = " + result);
+                System.out.println("result = null");
             }
         }
 
@@ -102,7 +83,7 @@ public class JpaMain {
                 System.out.println(result.getClass().getName() + "\t, result = " + result);
                 return;
             }
-            System.out.println("result = " + result);
+            System.out.println("result = null");
         }
     }
 }
