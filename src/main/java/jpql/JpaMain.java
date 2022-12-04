@@ -19,27 +19,25 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
 
+        /**
+         * 서브 쿼리
+         * • 나이가 평균보다 많은 회원
+         * select m from Member m
+         * where m.age > (select avg(m2.age) from Member m2)
+         */
         try {
-            Member member1 = Member.createMember("name", 11);
-            em.persist(member1);
-            Member member2 = Member.createMember("name2", 11);
-            em.persist(member2);
-
-            Product product1 = Product.createProduct("name", 10000, 100);
-            em.persist(product1);
-            Product product2 = Product.createProduct("name2", 10000, 100);
-            em.persist(product2);
+            for (int i = 0; i < 40; i++) {
+                Member member = Member.createMember("name"+i, 10 + i);
+                em.persist(member);
+            }
 
             em.flush();
             em.clear();
-            /**
-             * [ON vs WHERE]
-             * ON : JOIN 을 하기 전 필터링을 한다 (=ON 조건으로 필터링이 된 레코들간 JOIN이 이뤄진다)
-             * WHERE : JOIN 을 한 후 필터링을 한다 (=JOIN을 한 결과에서 WHERE 조건절로 필터링이 이뤄진다)
-             * https://developyo.tistory.com/121
-             */
 
-            String query = "select p, m from Member m left join Product p on m.username = p.name";
+            String query =
+                    "select m " +
+                    "from Member m " +
+                    "where m.age > (select avg(m2.age) from Member m2)";
             List resultList = em.createQuery(query)
                     .getResultList();
 
