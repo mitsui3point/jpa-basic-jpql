@@ -1,6 +1,8 @@
 package jpql;
 
+import jpql.embeddable.Address;
 import jpql.entity.Member;
+import jpql.entity.Order;
 import jpql.entity.Product;
 import jpql.generic.Generic;
 
@@ -21,14 +23,22 @@ public class JpaMain {
 
         /**
          * 서브 쿼리
-         * • 나이가 평균보다 많은 회원
+         * 한 건이라도 주문한 고객
          * select m from Member m
-         * where m.age > (select avg(m2.age) from Member m2)
+         * where (select count(o) from Order o where m = o.member) > 0
          */
         try {
             for (int i = 0; i < 40; i++) {
                 Member member = Member.createMember("name"+i, 10 + i);
                 em.persist(member);
+                if (i % 4 == 0) {
+                    Order order = Order.createOrder(member, 3 + i, new Address("city" + i, "street" + i, "1000" + i));
+                    em.persist(order);
+                }
+                if (i % 2 == 0) {
+                    Order order = Order.createOrder(member, 3 + i, new Address("city" + i, "street" + i, "1000" + i));
+                    em.persist(order);
+                }
             }
 
             em.flush();
@@ -37,7 +47,7 @@ public class JpaMain {
             String query =
                     "select m " +
                     "from Member m " +
-                    "where m.age > (select avg(m2.age) from Member m2)";
+                    "where (select count(o) from Order o where m = o.member) > 1 ";
             List resultList = em.createQuery(query)
                     .getResultList();
 

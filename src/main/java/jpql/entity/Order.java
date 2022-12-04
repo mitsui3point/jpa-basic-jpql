@@ -50,9 +50,8 @@ public class Order {
 
     //==연관관계 편의 메서드==//
 
-    public static Order createOrder(Long id, Member member, int orderAmount, Address address) {
+    public static Order createOrder(Member member, int orderAmount, Address address) {
         Order order = new Order();
-        order.id = id;
         order.member = member;
         order.orderAmount = orderAmount;
         order.address = address;
