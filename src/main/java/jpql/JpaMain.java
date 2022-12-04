@@ -1,6 +1,7 @@
 package jpql;
 
 import jpql.entity.Member;
+import jpql.entity.item.Book;
 import jpql.generic.Generic;
 
 import javax.persistence.EntityManager;
@@ -21,18 +22,16 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = Member.createMember("member1", 33, USER);
-            em.persist(member);
+            Book book = Book.create("book", 10000, 100, "author1", "isbn1");
+            em.persist(book);
 
             em.flush();
             em.clear();
 
-            String query ="select m, 'STRING', 'SHE''S', 10, 10L, 10.01D, 10.01F, TRUE " +
-                    "from Member m " +
-//                    "where m.type = jpql.enumulate.MemberType.USER";
-                    "where m.type = :memberType";
+            String query ="select i " +
+                    "from Item i " +
+                    "where type(i) = Book ";
             List resultList = em.createQuery(query)
-                    .setParameter("memberType", USER)
                     .getResultList();
 
             System.out.println("resultList.size() = " + resultList.size());
