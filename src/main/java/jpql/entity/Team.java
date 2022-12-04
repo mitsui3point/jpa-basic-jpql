@@ -18,27 +18,34 @@ public class Team {
     @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();
 
-    public Long getId() {
-        return id;
+    protected Team() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<Member> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Member> members) {
-        this.members = members;
+    //==연관관계 편의 메서드==//
+
+    public static Team createTeam(String name) {
+        Team team = new Team();
+        team.name = name;
+        return team;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

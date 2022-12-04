@@ -15,50 +15,46 @@ public class Member {
     private int age;
 
     @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "TEAM_ID")
     private Team team;
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
-    public Long getId() {
-        return id;
+    protected Member() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public int getAge() {
         return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public Team getTeam() {
         return team;
     }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
     public List<Order> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    //==연관관계 편의 메서드==//
+
+    public static Member createMember(String username, int age) {
+        Member member = new Member();
+        member.username = username;
+        member.age = age;
+        return member;
+    }
+
+    public void changeTeam(Team team) {
+        this.team = team;
+        team.getMembers().add(this);
     }
 
     @Override
