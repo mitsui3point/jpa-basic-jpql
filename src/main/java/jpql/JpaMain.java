@@ -1,8 +1,7 @@
 package jpql;
 
 import jpql.entity.Member;
-import jpql.entity.item.Book;
-import jpql.generic.Generic;
+import jpql.generic.GenericPrint;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,7 +37,7 @@ public class JpaMain {
 
             System.out.println("resultList.size() = " + resultList.size());
             for (Object object : resultList) {
-                new Generic<>(object);
+                new GenericPrint<>(object);
             }
             tx.commit();
         } catch (Exception e) {

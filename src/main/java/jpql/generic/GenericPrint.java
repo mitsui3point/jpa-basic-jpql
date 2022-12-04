@@ -1,11 +1,9 @@
 package jpql.generic;
 
-import java.util.Arrays;
-
-public class Generic<T> {
+public class GenericPrint<T> {
     private T object;
 
-    public Generic(T object) {
+    public GenericPrint(T object) {
         this.object = object;
         print();
     }
