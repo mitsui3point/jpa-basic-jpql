@@ -1,5 +1,7 @@
 package jpql.entity;
 
+import jpql.enumulate.MemberType;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    @Enumerated(value = EnumType.STRING)
+    private MemberType type;
+
     protected Member() {
     }
 
@@ -39,16 +44,18 @@ public class Member {
     public Team getTeam() {
         return team;
     }
+
     public List<Order> getOrders() {
         return orders;
     }
 
     //==연관관계 편의 메서드==//
 
-    public static Member createMember(String username, int age) {
+    public static Member createMember(String username, int age, MemberType type) {
         Member member = new Member();
         member.username = username;
         member.age = age;
+        member.type = type;
         return member;
     }
 
