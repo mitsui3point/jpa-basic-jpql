@@ -4,6 +4,7 @@ import jpql.embeddable.Address;
 import jpql.entity.Member;
 import jpql.entity.Order;
 import jpql.entity.Product;
+import jpql.entity.Team;
 import jpql.generic.Generic;
 
 import javax.persistence.EntityManager;
@@ -22,33 +23,34 @@ public class JpaMain {
         tx.begin();
 
         /**
-         * 서브 쿼리
-         * 한 건이라도 주문한 고객
+         * 서브 쿼리 지원 함수
+         * 팀A 소속인 회원
          * select m from Member m
-         * where (select count(o) from Order o where m = o.member) > 0
+         * where exists (select t from m.team t where t.name = ‘팀A')
          */
         try {
             for (int i = 0; i < 40; i++) {
-                Member member = Member.createMember("name"+i, 10 + i);
+                Member member = Member.createMember("name" + i, 10 + i);
+
+                Team team = Team.createTeam("teamA");
+                if (i % 4 != 0 && i % 2 != 0) {
+                    team = Team.createTeam("teamB");
+                }
+                em.persist(team);
+
+                member.changeTeam(team);
                 em.persist(member);
-                if (i % 4 == 0) {
-                    Order order = Order.createOrder(member, 3 + i, new Address("city" + i, "street" + i, "1000" + i));
-                    em.persist(order);
-                }
-                if (i % 2 == 0) {
-                    Order order = Order.createOrder(member, 3 + i, new Address("city" + i, "street" + i, "1000" + i));
-                    em.persist(order);
-                }
             }
 
             em.flush();
             em.clear();
 
             String query =
-                    "select m " +
+                    "select m, m.team " +
                     "from Member m " +
-                    "where (select count(o) from Order o where m = o.member) > 1 ";
+                    "where exists (select t from m.team t where t.name = :name) ";
             List resultList = em.createQuery(query)
+                    .setParameter("name", "teamA")
                     .getResultList();
 
             System.out.println("resultList.size() = " + resultList.size());
