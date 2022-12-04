@@ -24,21 +24,24 @@ public class JpaMain {
 
         /**
          * 서브 쿼리 지원 함수
-         * 팀A 소속인 회원
-         * select m from Member m
-         * where exists (select t from m.team t where t.name = ‘팀A')
+         * 전체 상품 각각의 재고보다 주문량이 많은 주문들
+         * select o from Order o
+         * where o.orderAmount > ALL (select p.stockAmount from Product p)
          */
         try {
+            //         * 전체 상품 각각의 재고보다 주문량이 많은 주문들
             for (int i = 0; i < 40; i++) {
                 Member member = Member.createMember("name" + i, 10 + i);
 
-                Team team = Team.createTeam("teamA");
                 if (i % 4 != 0 && i % 2 != 0) {
-                    team = Team.createTeam("teamB");
-                }
-                em.persist(team);
+                    Product product = Product.createProduct("product" + i, 1000, 80 + i);
+                    Order order = Order.createOrder(member, 100, new Address("city" + i, "street " + i, "1000 " + i));
+                    order.putProduct(product);
 
-                member.changeTeam(team);
+                    em.persist(product);
+                    em.persist(order);
+                }
+
                 em.persist(member);
             }
 
@@ -46,11 +49,10 @@ public class JpaMain {
             em.clear();
 
             String query =
-                    "select m, m.team " +
-                    "from Member m " +
-                    "where exists (select t from m.team t where t.name = :name) ";
+                    "select o, o.product " +
+                    "from Order o " +
+                    "where o.orderAmount > ALL (select p.stockAmount from o.product p) ";
             List resultList = em.createQuery(query)
-                    .setParameter("name", "teamA")
                     .getResultList();
 
             System.out.println("resultList.size() = " + resultList.size());

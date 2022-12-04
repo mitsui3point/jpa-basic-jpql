@@ -58,6 +58,15 @@ public class Order {
         return order;
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", orderAmount=" + orderAmount +
+                ", address=" + address +
+                '}';
+    }
+
     public void putProduct(Product product) {
         this.product = product;
     }
