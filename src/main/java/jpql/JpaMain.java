@@ -2,7 +2,6 @@ package jpql;
 
 import jpql.entity.Member;
 import jpql.entity.Team;
-import jpql.enumulate.MemberType;
 import jpql.generic.GenericPrint;
 
 import javax.persistence.EntityManager;
@@ -11,7 +10,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.List;
 
-import static jpql.enumulate.MemberType.ADMIN;
 import static jpql.enumulate.MemberType.USER;
 
 public class JpaMain {
@@ -25,27 +23,25 @@ public class JpaMain {
 
         try {
 
+            Team team1 = Team.createTeam("team1");
+            Team team2 = Team.createTeam("team2");
+
             Member member1 = Member.createMember("member1", 11, USER);
+            Member member2 = Member.createMember("member2", 11, USER);
+
+            member1.changeTeam(team1);
+            member2.changeTeam(team1);
+
+            em.persist(team1);
+            em.persist(team2);
 
             em.persist(member1);
+            em.persist(member2);
 
             em.flush();
             em.clear();
 
-            String query = "select m, " +
-                    "concat('a', 'b') as concatEx, " +
-                    //hibernate 구현체 지원문법. jpa 표준 interface 에서는 지원하지 않는 문법(jpa 사용시 90% 는 hibernate 구현체를 사용)
-                    //"'a' || 'b' as doublePipeEx, "
-                    "substring('jpabook', 4, 3) as substringEx, " +
-                    "trim('         jpa book') as trimEx, " +
-                    "lower('JPABOOK') as lowerEx, " +
-                    "upper('jpabook') as upperEx, " +
-                    "length('jpabook') as lengthEx, " +
-                    "locate('boo', 'jpabook') as locateEx, " +
-                    "abs(-33L) as absEx, " +//정수
-                    "sqrt(33L) as sqrtEx, " +//제곱근
-                    "mod(33L, 5L) as modEx " +//나머지
-                    "from Member m ";
+            String query = "select t from Team t where size(t.members) = 2 ";
             List resultList = em.createQuery(query)
                     .getResultList();
 
