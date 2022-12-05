@@ -41,7 +41,7 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select t from Team t where size(t.members) = 2 ";
+            String query = "select function('group_concat', m.username) from Member m";
             List resultList = em.createQuery(query)
                     .getResultList();
 
