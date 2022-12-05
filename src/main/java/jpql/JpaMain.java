@@ -22,8 +22,14 @@ public class JpaMain {
         tx.begin();
 
         try {
+            Team team1 = Team.createTeam("team1");
+            em.persist(team1);
+
             Member member1 = Member.createMember("member1", 11, USER);
             Member member2 = Member.createMember("member2", 11, USER);
+
+            member1.changeTeam(team1);
+            member2.changeTeam(team1);
 
             em.persist(member1);
             em.persist(member2);
@@ -31,7 +37,7 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m.username " + //상태 필드
+            String query = "select m.team " + //단일 값 연관 필드; 묵시적 조인
                     "from Member m";
             List resultList = em.createQuery(query)
                     .getResultList();
