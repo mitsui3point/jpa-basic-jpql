@@ -37,8 +37,9 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select t.members " +//컬렉션 값 연관 필드; 묵시적 조인
-                    "from Team t ";
+            String query = "select m " +
+                    "from Team t " +
+                    "inner join t.members m ";//컬렉션 값 연관 필드; 명시적 조인
             List resultList = em.createQuery(query)
                     .getResultList();
 
