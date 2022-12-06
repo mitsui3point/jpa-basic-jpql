@@ -47,7 +47,7 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select t " +
+            String query = "select distinct t " +
                     "from Team t " +
                     "left outer join fetch t.members m ";//fetch join 적용
             List<Team> teams = em.createQuery(query, Team.class)
