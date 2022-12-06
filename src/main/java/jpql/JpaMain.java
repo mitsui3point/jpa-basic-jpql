@@ -1,19 +1,10 @@
 package jpql;
 
-import jpql.entity.Member;
-import jpql.entity.Team;
-import jpql.entity.item.Book;
-import jpql.entity.item.Item;
+import jpql.entity.Product;
 import jpql.print.ObjectPrinter;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.List;
-
-import static jpql.enumulate.MemberType.ADMIN;
-import static jpql.enumulate.MemberType.USER;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -25,26 +16,22 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Team team1 = Team.createTeam("team1");
-            em.persist(team1);
-
-            Member member1 = Member.createMember("name1", 10, ADMIN);
-            member1.changeTeam(team1);
-            em.persist(member1);
-
-            Member member2 = Member.createMember("name2", 10, ADMIN);
-//            member2.changeTeam(team1);
-            em.persist(member2);
+            for (int i = 0; i < 15; i++) {
+                Product product = Product.createProduct("product" + i, 1000 + (100 * i), i);
+                em.persist(product);
+            }
 
             em.flush();
             em.clear();
 
-            List members = em.createNamedQuery("Member.findByUsername")
-                    .setParameter("username", member2.getUsername())
-                    .getResultList();
+            String updateQuery = "update Product p set p.price = p.price * 1.1 where p.stockAmount < 10 ";
+            int updateCount = em.createQuery(updateQuery)
+                    .executeUpdate();
+            System.out.println("updateCount = " + updateCount);
 
-            for (Object m : members) {
-                new ObjectPrinter(m).print();
+            List<Product> products = em.createQuery("select p from Product p ", Product.class).getResultList();
+            for (Product product : products) {
+                new ObjectPrinter(product).print();
             }
 
             tx.commit();
