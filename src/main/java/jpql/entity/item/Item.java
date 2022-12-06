@@ -3,6 +3,7 @@ package jpql.entity.item;
 import javax.persistence.*;
 
 @Entity
+@DiscriminatorColumn
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Item {
     @Id

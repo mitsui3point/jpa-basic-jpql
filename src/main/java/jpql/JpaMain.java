@@ -2,6 +2,8 @@ package jpql;
 
 import jpql.entity.Member;
 import jpql.entity.Team;
+import jpql.entity.item.Book;
+import jpql.entity.item.Item;
 import jpql.print.ObjectPrinter;
 
 import javax.persistence.EntityManager;
@@ -23,46 +25,21 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Team team1 = Team.createTeam("team1");
-            Team team2 = Team.createTeam("team2");
-            Team team3 = Team.createTeam("team3");
-
-            em.persist(team1);
-            em.persist(team2);
-            em.persist(team3);
-
-            Member member1 = Member.createMember("회원1", 11, USER);
-            Member member2 = Member.createMember("회원2", 12, USER);
-            Member member3 = Member.createMember("회원3", 13, USER);
-            Member member4 = Member.createMember(null, 14, USER);
-
-            member1.changeTeam(team1);
-            member2.changeTeam(team1);
-            member3.changeTeam(team2);
-
-            em.persist(member1);
-            em.persist(member2);
-            em.persist(member3);
-            em.persist(member4);
+            Book book = Book.create("book1", 1000, 10, "author", "1000-1");
+            em.persist(book);
 
             em.flush();
             em.clear();
 
-            //하이버네이트는 경고 로그를 남기고 메모리에서 페이징(매우 위험)
-            //WARN: HHH000104: firstResult/maxResults specified with collection fetch; applying in memory!
-            //해결; LAZY Loading, team.getMembers() 를 객체 그래프 탐색할 때 마다 쿼리가 나가게 됨, 성능이 좋지 않음.
-            String query = "select t " +
-                    "from Team t ";
-            List<Team> teams = em.createQuery(query, Team.class)
-                    .setFirstResult(0)
-                    .setMaxResults(3)
+            List<Item> resultList = em.createQuery("select i " +
+                            "from Item i " +
+                            "where type(i) in (Book)", Item.class)
                     .getResultList();
 
-            System.out.println("resultList.size() = " + teams.size());
-            for (Team team : teams) {
-                new ObjectPrinter(team).print();
-                new ObjectPrinter(team.getMembers()).print();
+            for (Item item : resultList) {
+                new ObjectPrinter(item).print();
             }
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
