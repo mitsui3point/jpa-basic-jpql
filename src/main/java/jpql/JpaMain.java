@@ -33,9 +33,11 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select count(m) " +
-                    "from Member m ";
+            String query = "select m " +
+                    "from Member m " +
+                    "where m = :member ";
             List members = em.createQuery(query)
+                    .setParameter("member", member1)
                     .getResultList();
 
             for (Object m : members) {
