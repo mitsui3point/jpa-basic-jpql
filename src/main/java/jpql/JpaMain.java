@@ -49,15 +49,20 @@ public class JpaMain {
 
             String query = "select m " +
                     "from Member m " +
-                    "inner join m.team t ";//fetch join 미적용
+                    "left outer join fetch m.team t ";//fetch join 적용
             List<Member> members = em.createQuery(query, Member.class)
                     .getResultList();
 
             System.out.println("resultList.size() = " + members.size());
             for (Member member : members) {
                 new ObjectPrinter(member).print();
-                new ObjectPrinter(member.getTeam()).print();
-                System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
+                if (member.getTeam() != null) {
+                    new ObjectPrinter(member.getTeam()).print();//페치 조인으로 회원과 팀을 함께 조회해서 지연 로딩X
+                    System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
+                    continue;
+                }
+                new ObjectPrinter(null).print();
+                System.out.println("member.getTeam().getName() = null");
             }
             tx.commit();
         } catch (Exception e) {

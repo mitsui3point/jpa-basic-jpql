@@ -30,7 +30,7 @@ public class ObjectPrinter {
                         "\t: result = " + object);
                 continue;
             }
-            System.out.println("result = null");
+            System.out.println(NullPointerException.class.getName() + "\t, result = null");
         }
     }
 
@@ -41,6 +41,6 @@ public class ObjectPrinter {
             System.out.println(object.getClass().getName() + "\t, result = " + object);
             return;
         }
-        System.out.println("result = null");
+        System.out.println(NullPointerException.class.getName() + "\t, result = null");
     }
 }
