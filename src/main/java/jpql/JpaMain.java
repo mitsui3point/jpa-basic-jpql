@@ -33,7 +33,7 @@ public class JpaMain {
 
             List<Item> resultList = em.createQuery("select i " +
                             "from Item i " +
-                            "where type(i) in (Book)", Item.class)
+                            "where treat(i as Book).author = 'author'", Item.class)
                     .getResultList();
 
             for (Item item : resultList) {
