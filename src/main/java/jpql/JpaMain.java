@@ -47,20 +47,22 @@ public class JpaMain {
 
             em.flush();
             em.clear();
-            String query = "select t " +
-                    "from Team t " +
-                    "join fetch t.members m ";
+
             //하이버네이트는 경고 로그를 남기고 메모리에서 페이징(매우 위험)
             //WARN: HHH000104: firstResult/maxResults specified with collection fetch; applying in memory!
-            List<Team> teams = em.createQuery(query, Team.class)
+            //해결; 역방향 조인; 다대일은 페이징에 문제가없음.
+            String query = "select m " +
+                    "from Member m " +
+                    "join fetch m.team t ";
+            List<Member> members = em.createQuery(query, Member.class)
                     .setFirstResult(0)
                     .setMaxResults(1)
                     .getResultList();
 
-            System.out.println("resultList.size() = " + teams.size());
-            for (Team team : teams) {
-                new ObjectPrinter(team).print();
-                new ObjectPrinter(team.getMembers()).print();
+            System.out.println("resultList.size() = " + members.size());
+            for (Member member : members) {
+                new ObjectPrinter(member).print();
+                new ObjectPrinter(member.getTeam()).print();
             }
             tx.commit();
         } catch (Exception e) {
