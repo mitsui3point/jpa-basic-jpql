@@ -23,29 +23,41 @@ public class JpaMain {
 
         try {
             Team team1 = Team.createTeam("team1");
-            em.persist(team1);
+            Team team2 = Team.createTeam("team2");
+            Team team3 = Team.createTeam("team3");
 
-            Member member1 = Member.createMember("member1", 11, USER);
-            Member member2 = Member.createMember("member2", 11, USER);
+            em.persist(team1);
+            em.persist(team2);
+            em.persist(team3);
+
+            Member member1 = Member.createMember("회원1", 11, USER);
+            Member member2 = Member.createMember("회원2", 12, USER);
+            Member member3 = Member.createMember("회원3", 13, USER);
+            Member member4 = Member.createMember(null, 14, USER);
 
             member1.changeTeam(team1);
             member2.changeTeam(team1);
+            member3.changeTeam(team2);
 
             em.persist(member1);
             em.persist(member2);
+            em.persist(member3);
+            em.persist(member4);
 
             em.flush();
             em.clear();
 
             String query = "select m " +
-                    "from Team t " +
-                    "inner join t.members m ";//컬렉션 값 연관 필드; 명시적 조인
-            List resultList = em.createQuery(query)
+                    "from Member m " +
+                    "inner join m.team t ";//fetch join 미적용
+            List<Member> members = em.createQuery(query, Member.class)
                     .getResultList();
 
-            System.out.println("resultList.size() = " + resultList.size());
-            for (Object object : resultList) {
-                new ObjectPrinter(object).print();
+            System.out.println("resultList.size() = " + members.size());
+            for (Member member : members) {
+                new ObjectPrinter(member).print();
+                new ObjectPrinter(member.getTeam()).print();
+                System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
             }
             tx.commit();
         } catch (Exception e) {
