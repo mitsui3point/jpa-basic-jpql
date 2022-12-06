@@ -47,22 +47,16 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m " +
-                    "from Member m " +
-                    "left outer join fetch m.team t ";//fetch join 적용
-            List<Member> members = em.createQuery(query, Member.class)
+            String query = "select t " +
+                    "from Team t " +
+                    "left outer join fetch t.members m ";//fetch join 적용
+            List<Team> teams = em.createQuery(query, Team.class)
                     .getResultList();
 
-            System.out.println("resultList.size() = " + members.size());
-            for (Member member : members) {
-                new ObjectPrinter(member).print();
-                if (member.getTeam() != null) {
-                    new ObjectPrinter(member.getTeam()).print();//페치 조인으로 회원과 팀을 함께 조회해서 지연 로딩X
-                    System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
-                    continue;
-                }
-                new ObjectPrinter(null).print();
-                System.out.println("member.getTeam().getName() = null");
+            System.out.println("resultList.size() = " + teams.size());
+            for (Team team : teams) {
+                new ObjectPrinter(team).print();
+                new ObjectPrinter(team.getMembers()).print();//페치 조인으로 팀과 회원을 함께 조회해서 지연 로딩 발생 안함
             }
             tx.commit();
         } catch (Exception e) {
