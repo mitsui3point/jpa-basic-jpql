@@ -2,7 +2,7 @@ package jpql;
 
 import jpql.entity.Member;
 import jpql.entity.Team;
-import jpql.generic.GenericPrint;
+import jpql.print.ObjectPrinter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -45,7 +45,7 @@ public class JpaMain {
 
             System.out.println("resultList.size() = " + resultList.size());
             for (Object object : resultList) {
-                new GenericPrint<>(object);
+                new ObjectPrinter(object).print();
             }
             tx.commit();
         } catch (Exception e) {

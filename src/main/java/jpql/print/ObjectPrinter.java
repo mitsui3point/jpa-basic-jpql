@@ -1,16 +1,15 @@
-package jpql.generic;
+package jpql.print;
 
-public class GenericPrint<T> {
-    private T object;
+public class ObjectPrinter {
+    private Object object;
 
-    public GenericPrint(T object) {
+    public ObjectPrinter(Object object) {
         this.object = object;
-        print();
     }
 
-    private void print() {
+    public void print() {
         System.out.println("=====================");
-        if (object instanceof Object[]) {
+        if (isArray()) {
             printAll();
             return;
         }
@@ -18,12 +17,17 @@ public class GenericPrint<T> {
         System.out.println("=====================");
     }
 
+    private boolean isArray() {
+        return object instanceof Object[];
+    }
+
     private void printAll() {
 
         Object[] objects = (Object[]) object;
-        for (Object result : objects) {
-            if (result != null) {
-                System.out.println(result.getClass().getName() + "\t: result = " + result);
+        for (Object object : objects) {
+            if (object != null) {
+                System.out.println(object.getClass().getName() +
+                        "\t: result = " + object);
                 continue;
             }
             System.out.println("result = null");
@@ -33,9 +37,8 @@ public class GenericPrint<T> {
     private void printOne() {
         StringBuilder sb = new StringBuilder();
 
-        T result = object;
-        if (result != null) {
-            System.out.println(result.getClass().getName() + "\t, result = " + result);
+        if (object != null) {
+            System.out.println(object.getClass().getName() + "\t, result = " + object);
             return;
         }
         System.out.println("result = null");
