@@ -25,19 +25,21 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Book book = Book.create("book1", 1000, 10, "author", "1000-1");
-            em.persist(book);
+            Member member1 = Member.createMember("name1", 10, ADMIN);
+            em.persist(member1);
+            Member member2 = Member.createMember("name2", 10, ADMIN);
+            em.persist(member2);
 
             em.flush();
             em.clear();
 
-            List<Item> resultList = em.createQuery("select i " +
-                            "from Item i " +
-                            "where treat(i as Book).author = 'author'", Item.class)
+            String query = "select count(m) " +
+                    "from Member m ";
+            List members = em.createQuery(query)
                     .getResultList();
 
-            for (Item item : resultList) {
-                new ObjectPrinter(item).print();
+            for (Object m : members) {
+                new ObjectPrinter(m).print();
             }
 
             tx.commit();
